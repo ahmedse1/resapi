@@ -9,10 +9,10 @@ import lombok.Data;
 public class DeviceDTO {
 
     @NotEmpty(message = "Device name cannot be a null or empty")
-    @Size(min = 3, max = 30, message = "The length of the device name should be between 5 and 30")
+    @Size(min = 3, max = 30, message = "The length of the device name should be between 3 and 30")
     private String deviceName;
 
     @NotEmpty(message = "Device brand cannot be a null or empty")
-    @Size(min = 3, max = 30, message = "The length of the device brand should be between 5 and 30")
+    @Size(min = 3, max = 30, message = "The length of the device brand should be between 3 and 30")
     private String deviceBrand;
 }
