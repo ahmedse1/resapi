@@ -24,7 +24,7 @@ The project is implemented using Spring Boot v3.3.4 and Java 17, following best 
 
 1. **Clone the repository:**
     ```bash
-    git clone https://github.com/yourusername/device-api.git
+    git clone https://github.com/ahmedse1/restapi.git
     ```
 
 2. **Navigate to the project directory:**
