@@ -11,6 +11,7 @@
 	<groupId>com.example.device</groupId>
 	<artifactId>restapi</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+	<packaging>jar</packaging>
 	<name>restapi</name>
 	<description>REST service that supports the management of a device database</description>
 	<url/>
