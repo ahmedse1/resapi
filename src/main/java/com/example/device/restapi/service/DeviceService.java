@@ -53,6 +53,7 @@ public class DeviceService implements IDeviceService {
             Device device = optionalDevice.get();
             device.setDeviceName(deviceDTO.getDeviceName());
             device.setDeviceBrand(deviceDTO.getDeviceBrand());
+            device.setUpdatedAt(LocalDateTime.now());
             deviceRepository.save(device);
             return true;
         } else {

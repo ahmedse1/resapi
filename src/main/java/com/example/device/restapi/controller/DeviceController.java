@@ -53,7 +53,7 @@ public class DeviceController {
         boolean isUpdated = iDeviceService.updateDevice(deviceDTO);
         if(isUpdated) {
             return ResponseEntity.status(HttpStatus.OK)
-                    .body(new ResponseDTO("200", ""));
+                    .body(new ResponseDTO("200", "Device updated successfully"));
         } else{
             return ResponseEntity
                     .status(HttpStatus.EXPECTATION_FAILED)
@@ -67,7 +67,7 @@ public class DeviceController {
         boolean isDeleted = iDeviceService.deleteDevice(id);
         if(isDeleted) {
             return ResponseEntity.status(HttpStatus.OK)
-                    .body(new ResponseDTO("200", ""));
+                    .body(new ResponseDTO("200", "Device deleted successfully"));
         } else{
             return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED)
                     .body(new ResponseDTO("417", "Delete operation failed. Please try again or contact Dev team"));

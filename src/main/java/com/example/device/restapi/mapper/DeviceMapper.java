@@ -12,6 +12,7 @@ public class DeviceMapper {
     }
 
     public static DeviceDTO mapToDeviceDTO(Device device, DeviceDTO deviceDTO) {
+        deviceDTO.setDeviceId(device.getDeviceId());
         deviceDTO.setDeviceName(device.getDeviceName());
         deviceDTO.setDeviceBrand(device.getDeviceBrand());
         return deviceDTO;
