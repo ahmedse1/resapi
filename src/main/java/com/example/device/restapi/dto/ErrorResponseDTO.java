@@ -17,5 +17,4 @@ public class ErrorResponseDTO {
     private  String errorMessage;
 
     private LocalDateTime errorTime;
-
 }

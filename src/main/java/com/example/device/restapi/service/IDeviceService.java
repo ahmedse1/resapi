@@ -1,5 +1,6 @@
 package com.example.device.restapi.service;
 
+import com.example.device.restapi.dto.DeviceAddDTO;
 import com.example.device.restapi.dto.DeviceDTO;
 import com.example.device.restapi.dto.DeviceUpdateDTO;
 
@@ -7,7 +8,7 @@ import java.util.List;
 
 public interface IDeviceService {
 
-    void createDevice(DeviceDTO deviceDTO);
+    void createDevice(DeviceAddDTO deviceAddDTO);
 
     DeviceDTO getDeviceById(int id);
 

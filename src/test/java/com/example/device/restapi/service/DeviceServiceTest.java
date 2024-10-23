@@ -1,5 +1,6 @@
 package com.example.device.restapi.service;
 
+import com.example.device.restapi.dto.DeviceAddDTO;
 import com.example.device.restapi.dto.DeviceUpdateDTO;
 import com.example.device.restapi.entity.Device;
 import com.example.device.restapi.dto.DeviceDTO;
@@ -31,7 +32,7 @@ public class DeviceServiceTest {
     private DeviceService deviceService;
 
     private Device device;
-    private DeviceDTO deviceDTO;
+    private DeviceAddDTO deviceAddDTO;
     private DeviceUpdateDTO deviceUpdateDTO;
 
     @BeforeEach
@@ -42,10 +43,9 @@ public class DeviceServiceTest {
         device.setDeviceBrand("Apple");
         device.setCreatedAt(LocalDateTime.now());
 
-        deviceDTO = new DeviceDTO();
-        deviceDTO.setDeviceName("iPhone 14 pro");
-        deviceDTO.setDeviceBrand("Apple");
-        deviceDTO.setDeviceId(1);
+        deviceAddDTO = new DeviceAddDTO();
+        deviceAddDTO.setDeviceName("iPhone 14 pro");
+        deviceAddDTO.setDeviceBrand("Apple");
 
         deviceUpdateDTO = new DeviceUpdateDTO();
         deviceUpdateDTO.setDeviceName("iPhone 14 pro");
@@ -57,7 +57,7 @@ public class DeviceServiceTest {
     void testCreateDevice() {
         when(deviceRepository.save(any(Device.class))).thenReturn(device);
 
-        deviceService.createDevice(deviceDTO);
+        deviceService.createDevice(deviceAddDTO);
 
         verify(deviceRepository, times(1)).save(any(Device.class));
     }
@@ -69,8 +69,8 @@ public class DeviceServiceTest {
         DeviceDTO foundDeviceDTO = deviceService.getDeviceById(1);
 
         assertNotNull(foundDeviceDTO);
-        assertEquals(device.getDeviceName(), foundDeviceDTO.getDeviceName());
-        assertEquals(device.getDeviceBrand(), foundDeviceDTO.getDeviceBrand());
+        assertEquals(device.getDeviceName(), foundDeviceDTO.deviceName());
+        assertEquals(device.getDeviceBrand(), foundDeviceDTO.deviceBrand());
     }
 
     @Test
@@ -92,7 +92,7 @@ public class DeviceServiceTest {
 
         assertNotNull(deviceDTOs);
         assertEquals(1, deviceDTOs.size());
-        assertEquals(device.getDeviceName(), deviceDTOs.get(0).getDeviceName());
+        assertEquals(device.getDeviceName(), deviceDTOs.get(0).deviceName());
     }
 
     @Test
@@ -153,8 +153,8 @@ public class DeviceServiceTest {
 
         assertNotNull(foundDeviceDTOs);
         assertEquals(1, foundDeviceDTOs.size());
-        assertEquals(device.getDeviceName(), foundDeviceDTOs.get(0).getDeviceName());
-        assertEquals(device.getDeviceBrand(), foundDeviceDTOs.get(0).getDeviceBrand());
+        assertEquals(device.getDeviceName(), foundDeviceDTOs.get(0).deviceName());
+        assertEquals(device.getDeviceBrand(), foundDeviceDTOs.get(0).deviceBrand());
     }
 
 

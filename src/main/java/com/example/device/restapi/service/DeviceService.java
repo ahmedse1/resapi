@@ -1,5 +1,6 @@
 package com.example.device.restapi.service;
 
+import com.example.device.restapi.dto.DeviceAddDTO;
 import com.example.device.restapi.dto.DeviceDTO;
 import com.example.device.restapi.dto.DeviceUpdateDTO;
 import com.example.device.restapi.entity.Device;
@@ -26,8 +27,8 @@ public class DeviceService implements IDeviceService {
 
 
     @Override
-    public void createDevice(DeviceDTO deviceDTO) {
-        Device device = DeviceMapper.mapToDevice(deviceDTO, new Device());
+    public void createDevice(DeviceAddDTO deviceAddDTO) {
+        Device device = DeviceMapper.mapToDevice(deviceAddDTO, new Device());
         device.setCreatedAt(LocalDateTime.now());
         deviceRepository.save(device);
     }
@@ -36,14 +37,14 @@ public class DeviceService implements IDeviceService {
     public DeviceDTO getDeviceById(int id) {
         Device device = deviceRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Device not found with id: " + id));
-        return DeviceMapper.mapToDeviceDTO(device, new DeviceDTO());
+        return DeviceMapper.mapToDeviceDTO(device);
     }
 
     @Override
     public List<DeviceDTO> getAllDevices() {
         // Fetch all devices from the repository and convert them to DTOs
         return deviceRepository.findAll().stream()
-                .map(device -> DeviceMapper.mapToDeviceDTO(device, new DeviceDTO()))
+                .map(DeviceMapper::mapToDeviceDTO)
                 .collect(Collectors.toList());
     }
 
@@ -80,7 +81,7 @@ public class DeviceService implements IDeviceService {
     public List<DeviceDTO> getDeviceByBrand(String brand) {
         List<Device> devices = deviceRepository.findByDeviceBrandIgnoreCase(brand);
         return devices.stream()
-                .map(device -> DeviceMapper.mapToDeviceDTO(device, new DeviceDTO()))
+                .map(DeviceMapper::mapToDeviceDTO)
                 .collect(Collectors.toList());
     }
 }
