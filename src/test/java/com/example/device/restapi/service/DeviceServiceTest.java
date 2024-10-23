@@ -1,5 +1,6 @@
 package com.example.device.restapi.service;
 
+import com.example.device.restapi.dto.DeviceUpdateDTO;
 import com.example.device.restapi.entity.Device;
 import com.example.device.restapi.dto.DeviceDTO;
 import com.example.device.restapi.repository.DeviceRepository;
@@ -13,6 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,6 +32,7 @@ public class DeviceServiceTest {
 
     private Device device;
     private DeviceDTO deviceDTO;
+    private DeviceUpdateDTO deviceUpdateDTO;
 
     @BeforeEach
     void setUp() {
@@ -43,6 +46,11 @@ public class DeviceServiceTest {
         deviceDTO.setDeviceName("iPhone 14 pro");
         deviceDTO.setDeviceBrand("Apple");
         deviceDTO.setDeviceId(1);
+
+        deviceUpdateDTO = new DeviceUpdateDTO();
+        deviceUpdateDTO.setDeviceName("iPhone 14 pro");
+        deviceUpdateDTO.setDeviceBrand("Apple");
+        deviceUpdateDTO.setDeviceId(1);
     }
 
     @Test
@@ -92,10 +100,10 @@ public class DeviceServiceTest {
         when(deviceRepository.findById(1)).thenReturn(Optional.of(device));
         when(deviceRepository.save(any(Device.class))).thenReturn(device);
 
-        deviceDTO.setDeviceName("Updated iPhone");
-        deviceDTO.setDeviceBrand("Updated Apple");
+        deviceUpdateDTO.setDeviceName("Updated iPhone");
+        deviceUpdateDTO.setDeviceBrand("Updated Apple");
 
-        boolean updated = deviceService.updateDevice(deviceDTO);
+        boolean updated = deviceService.updateDevice(deviceUpdateDTO);
 
         assertTrue(updated);
         assertEquals("Updated iPhone", device.getDeviceName());
@@ -108,7 +116,7 @@ public class DeviceServiceTest {
         when(deviceRepository.findById(1)).thenReturn(Optional.empty());
 
         Exception exception = assertThrows(EntityNotFoundException.class, () -> {
-            deviceService.updateDevice(deviceDTO);
+            deviceService.updateDevice(deviceUpdateDTO);
         });
 
         assertEquals("Device not found with ID: 1", exception.getMessage());
@@ -136,24 +144,29 @@ public class DeviceServiceTest {
     }
 
     @Test
-    void testGetDeviceByBrand_Success() {
-        when(deviceRepository.findByDeviceBrand("Apple")).thenReturn(Optional.of(device));
+    void testGetDevicesByBrand_Success() {
 
-        DeviceDTO foundDeviceDTO = deviceService.getDeviceByBrand("Apple");
+        List<Device> devices = Collections.singletonList(device);
+        when(deviceRepository.findByDeviceBrandIgnoreCase("Apple")).thenReturn(devices);
 
-        assertNotNull(foundDeviceDTO);
-        assertEquals(device.getDeviceName(), foundDeviceDTO.getDeviceName());
-        assertEquals(device.getDeviceBrand(), foundDeviceDTO.getDeviceBrand());
+        List<DeviceDTO> foundDeviceDTOs = deviceService.getDeviceByBrand("Apple");
+
+        assertNotNull(foundDeviceDTOs);
+        assertEquals(1, foundDeviceDTOs.size());
+        assertEquals(device.getDeviceName(), foundDeviceDTOs.get(0).getDeviceName());
+        assertEquals(device.getDeviceBrand(), foundDeviceDTOs.get(0).getDeviceBrand());
     }
+
 
     @Test
-    void testGetDeviceByBrand_NotFound() {
-        when(deviceRepository.findByDeviceBrand("Apple")).thenReturn(Optional.empty());
+    void testGetDevicesByBrand_NotFound() {
 
-        Exception exception = assertThrows(EntityNotFoundException.class, () -> {
-            deviceService.getDeviceByBrand("Apple");
-        });
+        when(deviceRepository.findByDeviceBrandIgnoreCase("Apple")).thenReturn(Collections.emptyList());
 
-        assertEquals("Device not found with brand: Apple", exception.getMessage());
+        List<DeviceDTO> foundDeviceDTOs = deviceService.getDeviceByBrand("Apple");
+
+        assertNotNull(foundDeviceDTOs);
+        assertTrue(foundDeviceDTOs.isEmpty());
     }
+
 }

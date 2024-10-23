@@ -1,6 +1,7 @@
 package com.example.device.restapi.service;
 
 import com.example.device.restapi.dto.DeviceDTO;
+import com.example.device.restapi.dto.DeviceUpdateDTO;
 
 import java.util.List;
 
@@ -12,10 +13,10 @@ public interface IDeviceService {
 
     List<DeviceDTO> getAllDevices();
 
-    boolean updateDevice(DeviceDTO deviceDTO);
+    boolean updateDevice(DeviceUpdateDTO deviceUpdateDTO);
 
 
     boolean deleteDevice(int id);
 
-    DeviceDTO getDeviceByBrand(String brand);
+    List<DeviceDTO> getDeviceByBrand(String brand);
 }

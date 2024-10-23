@@ -8,6 +8,12 @@ import lombok.ToString;
 
 import java.time.LocalDateTime;
 
+/*
+This class serves the purpose of a parent class for entity objects.
+It contains shared attributes to be used by other entities.
+In our case, we only have one entity for Device,
+but if we add more entities in the future, this will serve as a Base Entity.
+ */
 @MappedSuperclass
 @Setter @Getter @ToString
 public class BaseEntity {

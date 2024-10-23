@@ -2,8 +2,10 @@ package com.example.device.restapi.controller;
 
 
 import com.example.device.restapi.dto.DeviceDTO;
+import com.example.device.restapi.dto.DeviceUpdateDTO;
 import com.example.device.restapi.dto.ResponseDTO;
 import com.example.device.restapi.service.IDeviceService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -13,31 +15,30 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/api", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/api/devices", produces = MediaType.APPLICATION_JSON_VALUE)
 @AllArgsConstructor
 public class DeviceController {
 
-    private IDeviceService iDeviceService;
+    private final IDeviceService iDeviceService;
 
 
     //add device
-
-    @PostMapping("/create")
-    public ResponseEntity<ResponseDTO> create(@RequestBody DeviceDTO deviceDTO) {
+    @PostMapping
+    public ResponseEntity<ResponseDTO> create(@Valid @RequestBody DeviceDTO deviceDTO) {
         iDeviceService.createDevice(deviceDTO);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new ResponseDTO("201", "Device created successfully"));
     }
 
     //get device by id
-    @GetMapping("/get")
-    public ResponseEntity<DeviceDTO> getDeviceByIdentifier(@RequestParam int id) {
+    @GetMapping("/{id}")
+    public ResponseEntity<DeviceDTO> getDeviceByIdentifier(@PathVariable int id) {
         DeviceDTO deviceDTO = iDeviceService.getDeviceById(id);
         return ResponseEntity.status(HttpStatus.OK).body(deviceDTO);
     }
 
     //get all devices
-    @GetMapping("/getAll")
+    @GetMapping
     public ResponseEntity<List<DeviceDTO>> getAllDevices() {
         List<DeviceDTO> devices = iDeviceService.getAllDevices();
         if(devices.isEmpty()) {
@@ -48,9 +49,10 @@ public class DeviceController {
 
 
     //update device
-    @PutMapping("/update")
-    public ResponseEntity<ResponseDTO> updateDevice(@RequestBody DeviceDTO deviceDTO) {
-        boolean isUpdated = iDeviceService.updateDevice(deviceDTO);
+    @PutMapping("/{id}")
+    public ResponseEntity<ResponseDTO> updateDevice(@Valid @PathVariable int id, @Valid @RequestBody DeviceUpdateDTO deviceUpdateDTO) {
+        deviceUpdateDTO.setDeviceId(id);
+        boolean isUpdated = iDeviceService.updateDevice(deviceUpdateDTO);
         if(isUpdated) {
             return ResponseEntity.status(HttpStatus.OK)
                     .body(new ResponseDTO("200", "Device updated successfully"));
@@ -62,8 +64,8 @@ public class DeviceController {
     }
 
     //delete device
-    @DeleteMapping("/delete")
-    public ResponseEntity<ResponseDTO> deleteDevice(@RequestParam int id) {
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ResponseDTO> deleteDevice(@PathVariable int id) {
         boolean isDeleted = iDeviceService.deleteDevice(id);
         if(isDeleted) {
             return ResponseEntity.status(HttpStatus.OK)
@@ -75,9 +77,9 @@ public class DeviceController {
     }
 
     //search/get device by brand
-    @GetMapping("/getByBrand")
-    public ResponseEntity<DeviceDTO> getDeviceByBrand(@RequestParam String brand) {
-        DeviceDTO deviceDTO = iDeviceService.getDeviceByBrand(brand);
+    @GetMapping("/brand/{brand}")
+    public ResponseEntity<List<DeviceDTO>> getDeviceByBrand(@PathVariable String brand) {
+        List<DeviceDTO> deviceDTO = iDeviceService.getDeviceByBrand(brand);
         return ResponseEntity.status(HttpStatus.OK).body(deviceDTO);
     }
 }

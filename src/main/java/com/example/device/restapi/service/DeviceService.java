@@ -1,6 +1,7 @@
 package com.example.device.restapi.service;
 
 import com.example.device.restapi.dto.DeviceDTO;
+import com.example.device.restapi.dto.DeviceUpdateDTO;
 import com.example.device.restapi.entity.Device;
 import com.example.device.restapi.mapper.DeviceMapper;
 import com.example.device.restapi.repository.DeviceRepository;
@@ -47,17 +48,21 @@ public class DeviceService implements IDeviceService {
     }
 
     @Override
-    public boolean updateDevice(DeviceDTO deviceDTO) {
-        Optional<Device> optionalDevice = deviceRepository.findById(deviceDTO.getDeviceId());
+    public boolean updateDevice(DeviceUpdateDTO deviceUpdateDTO) {
+        Optional<Device> optionalDevice = deviceRepository.findById(deviceUpdateDTO.getDeviceId());
         if (optionalDevice.isPresent()) {
             Device device = optionalDevice.get();
-            device.setDeviceName(deviceDTO.getDeviceName());
-            device.setDeviceBrand(deviceDTO.getDeviceBrand());
+            if (deviceUpdateDTO.getDeviceName() != null && !deviceUpdateDTO.getDeviceName().isEmpty()) {
+                device.setDeviceName(deviceUpdateDTO.getDeviceName());
+            }
+            if (deviceUpdateDTO.getDeviceBrand() != null && !deviceUpdateDTO.getDeviceBrand().isEmpty()) {
+                device.setDeviceBrand(deviceUpdateDTO.getDeviceBrand());
+            }
             device.setUpdatedAt(LocalDateTime.now());
             deviceRepository.save(device);
             return true;
         } else {
-            throw new EntityNotFoundException("Device not found with ID: " + deviceDTO.getDeviceId());
+            throw new EntityNotFoundException("Device not found with ID: " + deviceUpdateDTO.getDeviceId());
         }
     }
 
@@ -72,10 +77,10 @@ public class DeviceService implements IDeviceService {
     }
 
     @Override
-    public DeviceDTO getDeviceByBrand(String brand) {
-        Device device = deviceRepository.findByDeviceBrand(brand)
-                .orElseThrow(() -> new EntityNotFoundException("Device not found with brand: " + brand));
-
-        return DeviceMapper.mapToDeviceDTO(device, new DeviceDTO());
+    public List<DeviceDTO> getDeviceByBrand(String brand) {
+        List<Device> devices = deviceRepository.findByDeviceBrandIgnoreCase(brand);
+        return devices.stream()
+                .map(device -> DeviceMapper.mapToDeviceDTO(device, new DeviceDTO()))
+                .collect(Collectors.toList());
     }
 }
