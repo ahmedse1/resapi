@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -115,9 +116,11 @@ public class DeviceController {
             @ApiResponse(responseCode = "404", description = "No devices found for the given brand",
                     content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
     })
-    @GetMapping("/brand/{brand}")
-    public ResponseEntity<List<DeviceDTO>> getDeviceByBrand(@PathVariable String brand) {
-        List<DeviceDTO> deviceDTO = iDeviceService.getDeviceByBrand(brand);
-        return ResponseEntity.status(HttpStatus.OK).body(deviceDTO);
+    @GetMapping("/brand")
+    public ResponseEntity<Page<DeviceDTO>> getDeviceByBrand(@RequestParam String brand,
+                                                            @RequestParam(defaultValue = "0") int page,
+                                                            @RequestParam(defaultValue = "10") int size) {
+        Page<DeviceDTO> devicesPage = iDeviceService.getDeviceByBrand(brand, page, size);
+        return ResponseEntity.status(HttpStatus.OK).body(devicesPage);
     }
 }

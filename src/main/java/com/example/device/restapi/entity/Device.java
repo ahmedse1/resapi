@@ -17,4 +17,9 @@ public class Device extends BaseEntity {
 
     @Column(name="device_brand")
     private String deviceBrand;
+
+    public Device(String deviceName, String deviceBrand) {
+        this.deviceName = deviceName;
+        this.deviceBrand = deviceBrand;
+    }
 }

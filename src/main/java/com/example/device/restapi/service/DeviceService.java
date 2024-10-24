@@ -8,6 +8,9 @@ import com.example.device.restapi.mapper.DeviceMapper;
 import com.example.device.restapi.repository.DeviceRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -28,7 +31,7 @@ public class DeviceService implements IDeviceService {
 
     @Override
     public void createDevice(DeviceAddDTO deviceAddDTO) {
-        Device device = DeviceMapper.mapToDevice(deviceAddDTO, new Device());
+        Device device = DeviceMapper.mapToDevice(deviceAddDTO);
         device.setCreatedAt(LocalDateTime.now());
         deviceRepository.save(device);
     }
@@ -78,10 +81,9 @@ public class DeviceService implements IDeviceService {
     }
 
     @Override
-    public List<DeviceDTO> getDeviceByBrand(String brand) {
-        List<Device> devices = deviceRepository.findByDeviceBrandIgnoreCase(brand);
-        return devices.stream()
-                .map(DeviceMapper::mapToDeviceDTO)
-                .collect(Collectors.toList());
+    public Page<DeviceDTO> getDeviceByBrand(String brand, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Device> devicesPage = deviceRepository.findByDeviceBrand(brand, pageable);
+        return devicesPage.map(DeviceMapper::mapToDeviceDTO);
     }
 }

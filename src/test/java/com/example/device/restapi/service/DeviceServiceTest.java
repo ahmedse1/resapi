@@ -12,9 +12,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.*;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -77,16 +77,14 @@ public class DeviceServiceTest {
     void testGetDeviceById_NotFound() {
         when(deviceRepository.findById(1)).thenReturn(Optional.empty());
 
-        Exception exception = assertThrows(EntityNotFoundException.class, () -> {
-            deviceService.getDeviceById(1);
-        });
+        Exception exception = assertThrows(EntityNotFoundException.class, () -> deviceService.getDeviceById(1));
 
         assertEquals("Device not found with id: 1", exception.getMessage());
     }
 
     @Test
     void testGetAllDevices() {
-        when(deviceRepository.findAll()).thenReturn(Arrays.asList(device));
+        when(deviceRepository.findAll()).thenReturn(Collections.singletonList(device));
 
         List<DeviceDTO> deviceDTOs = deviceService.getAllDevices();
 
@@ -115,9 +113,7 @@ public class DeviceServiceTest {
     void testUpdateDevice_NotFound() {
         when(deviceRepository.findById(1)).thenReturn(Optional.empty());
 
-        Exception exception = assertThrows(EntityNotFoundException.class, () -> {
-            deviceService.updateDevice(deviceUpdateDTO);
-        });
+        Exception exception = assertThrows(EntityNotFoundException.class, () -> deviceService.updateDevice(deviceUpdateDTO));
 
         assertEquals("Device not found with ID: 1", exception.getMessage());
     }
@@ -136,9 +132,7 @@ public class DeviceServiceTest {
     void testDeleteDevice_NotFound() {
         when(deviceRepository.existsById(1)).thenReturn(false);
 
-        Exception exception = assertThrows(EntityNotFoundException.class, () -> {
-            deviceService.deleteDevice(1);
-        });
+        Exception exception = assertThrows(EntityNotFoundException.class, () -> deviceService.deleteDevice(1));
 
         assertEquals("Device not found with ID: 1", exception.getMessage());
     }
@@ -147,23 +141,26 @@ public class DeviceServiceTest {
     void testGetDevicesByBrand_Success() {
 
         List<Device> devices = Collections.singletonList(device);
-        when(deviceRepository.findByDeviceBrandIgnoreCase("Apple")).thenReturn(devices);
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<Device> devicePage = new PageImpl<>(devices, pageable, devices.size());
+        when(deviceRepository.findByDeviceBrand("Apple", pageable)).thenReturn(devicePage);
 
-        List<DeviceDTO> foundDeviceDTOs = deviceService.getDeviceByBrand("Apple");
+        Page<DeviceDTO> foundDeviceDTOs = deviceService.getDeviceByBrand("Apple", 0, 10);
 
         assertNotNull(foundDeviceDTOs);
-        assertEquals(1, foundDeviceDTOs.size());
-        assertEquals(device.getDeviceName(), foundDeviceDTOs.get(0).deviceName());
-        assertEquals(device.getDeviceBrand(), foundDeviceDTOs.get(0).deviceBrand());
+        assertEquals(1, foundDeviceDTOs.getTotalElements());  // Check total elements
+        assertEquals(device.getDeviceName(), foundDeviceDTOs.getContent().get(0).deviceName());
+        assertEquals(device.getDeviceBrand(), foundDeviceDTOs.getContent().get(0).deviceBrand());
     }
 
 
     @Test
     void testGetDevicesByBrand_NotFound() {
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<Device> emptyPage = new PageImpl<>(Collections.emptyList(), pageable, 0);
+        when(deviceRepository.findByDeviceBrand("Apple", pageable)).thenReturn(emptyPage);
 
-        when(deviceRepository.findByDeviceBrandIgnoreCase("Apple")).thenReturn(Collections.emptyList());
-
-        List<DeviceDTO> foundDeviceDTOs = deviceService.getDeviceByBrand("Apple");
+        Page<DeviceDTO> foundDeviceDTOs = deviceService.getDeviceByBrand("Apple", 0, 10);
 
         assertNotNull(foundDeviceDTOs);
         assertTrue(foundDeviceDTOs.isEmpty());

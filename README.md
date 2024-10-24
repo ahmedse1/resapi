@@ -60,14 +60,14 @@ You can explore the API documentation via Swagger at:
 
 ## API Endpoints
 
-| Method | Endpoint                    | Description                         |
-|--------|-----------------------------|-------------------------------------|
-| POST   | `/api/devices`               | Create a new device                 |
-| GET    | `/api/devices/{id}`          | Get device by ID                    |
-| GET    | `/api/devices`               | Get all devices                     |
-| PUT    | `/api/devices/{id}`          | Update a device (full or partial)   |
-| DELETE | `/api/devices/{id}`          | Delete a device                     |
-| GET    | `/api/devices/brand/{brand}` | Get devices by brand                |
+| Method | Endpoint                                                                 | Description                          |
+|--------|--------------------------------------------------------------------------|--------------------------------------|
+| POST   | `/api/devices`                                                           | Create a new device                  |
+| GET    | `/api/devices/{id}`                                                      | Get device by ID                     |
+| GET    | `/api/devices`                                                           | Get all devices                      |
+| PUT    | `/api/devices/{id}`                                                      | Update a device (full or partial)    |
+| DELETE | `/api/devices/{id}`                                                      | Delete a device                      |
+| GET    | `/api/devices/brand?brand={brandName}&page={pageNumber}&size={pageSize}` | Get devices by brand with pagination |
 
 ## Running Tests
 
