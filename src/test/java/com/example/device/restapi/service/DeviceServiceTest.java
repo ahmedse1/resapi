@@ -160,10 +160,11 @@ public class DeviceServiceTest {
         Page<Device> emptyPage = new PageImpl<>(Collections.emptyList(), pageable, 0);
         when(deviceRepository.findByDeviceBrand("Apple", pageable)).thenReturn(emptyPage);
 
-        Page<DeviceDTO> foundDeviceDTOs = deviceService.getDeviceByBrand("Apple", 0, 10);
+        EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () -> {
+            deviceService.getDeviceByBrand("Apple", 0, 10);
+        });
 
-        assertNotNull(foundDeviceDTOs);
-        assertTrue(foundDeviceDTOs.isEmpty());
+        assertEquals("No devices found for the brand: Apple", exception.getMessage());
     }
 
 }

@@ -56,16 +56,12 @@ public class DeviceController {
     @Operation(summary = "Get all devices", description = "Retrieve a list of all devices.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Devices retrieved successfully",
-                    content = @Content(schema = @Schema(implementation = DeviceDTO.class))),
-            @ApiResponse(responseCode = "204", description = "No devices found")
+                    content = @Content(schema = @Schema(implementation = DeviceDTO.class)))
     })
     @GetMapping
     public ResponseEntity<List<DeviceDTO>> getAllDevices() {
         List<DeviceDTO> devices = iDeviceService.getAllDevices();
-        if(devices.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
-        }
-        return ResponseEntity.status(HttpStatus.OK).body(devices);
+        return ResponseEntity.ok(devices);
     }
 
 
@@ -79,15 +75,9 @@ public class DeviceController {
     @PutMapping("/{id}")
     public ResponseEntity<ResponseDTO> updateDevice(@Valid @PathVariable int id, @Valid @RequestBody DeviceUpdateDTO deviceUpdateDTO) {
         deviceUpdateDTO.setDeviceId(id);
-        boolean isUpdated = iDeviceService.updateDevice(deviceUpdateDTO);
-        if(isUpdated) {
-            return ResponseEntity.status(HttpStatus.OK)
-                    .body(new ResponseDTO("200", "Device updated successfully"));
-        } else{
-            return ResponseEntity
-                    .status(HttpStatus.EXPECTATION_FAILED)
-                    .body(new ResponseDTO("417", "Update operation failed. Please try again or contact Dev team"));
-        }
+        iDeviceService.updateDevice(deviceUpdateDTO);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new ResponseDTO("200", "Device updated successfully"));
     }
 
     @Operation(summary = "Delete device by ID", description = "Delete a device from the database by its ID.")
@@ -99,14 +89,9 @@ public class DeviceController {
     })
     @DeleteMapping("/{id}")
     public ResponseEntity<ResponseDTO> deleteDevice(@PathVariable int id) {
-        boolean isDeleted = iDeviceService.deleteDevice(id);
-        if(isDeleted) {
-            return ResponseEntity.status(HttpStatus.OK)
-                    .body(new ResponseDTO("200", "Device deleted successfully"));
-        } else{
-            return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED)
-                    .body(new ResponseDTO("417", "Delete operation failed. Please try again or contact Dev team"));
-        }
+        iDeviceService.deleteDevice(id);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new ResponseDTO("200", "Device deleted successfully"));
     }
 
     @Operation(summary = "Get devices by brand", description = "Search for devices by brand.")

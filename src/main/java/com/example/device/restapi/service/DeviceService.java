@@ -84,6 +84,9 @@ public class DeviceService implements IDeviceService {
     public Page<DeviceDTO> getDeviceByBrand(String brand, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<Device> devicesPage = deviceRepository.findByDeviceBrand(brand, pageable);
+        if (devicesPage.isEmpty()) {
+            throw new EntityNotFoundException("No devices found for the brand: " + brand);
+        }
         return devicesPage.map(DeviceMapper::mapToDeviceDTO);
     }
 }
