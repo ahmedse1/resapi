@@ -72,7 +72,9 @@ public class DeviceController {
             @ApiResponse(responseCode = "404", description = "Device not found",
                     content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
     })
-    @PutMapping("/{id}")
+
+    // using PATCH because of partial updates
+    @PatchMapping("/{id}")
     public ResponseEntity<ResponseDTO> updateDevice(@Valid @PathVariable int id, @Valid @RequestBody DeviceUpdateDTO deviceUpdateDTO) {
         deviceUpdateDTO.setDeviceId(id);
         iDeviceService.updateDevice(deviceUpdateDTO);
@@ -101,7 +103,7 @@ public class DeviceController {
             @ApiResponse(responseCode = "404", description = "No devices found for the given brand",
                     content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
     })
-    @GetMapping("/brand")
+    @GetMapping("")
     public ResponseEntity<Page<DeviceDTO>> getDeviceByBrand(@RequestParam String brand,
                                                             @RequestParam(defaultValue = "0") int page,
                                                             @RequestParam(defaultValue = "10") int size) {

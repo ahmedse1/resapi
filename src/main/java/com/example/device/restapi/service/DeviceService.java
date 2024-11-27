@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -23,6 +22,9 @@ public class DeviceService implements IDeviceService {
 
     private final DeviceRepository deviceRepository;
 
+    // Optional as of Spring 4.3 if there is only one constructor
+    // Constructor injection ensures that the dependency is available as soon as the object is created,
+    // preventing null references, and supports better testing and code readability.
     @Autowired
     public DeviceService(DeviceRepository deviceRepository) {
         this.deviceRepository = deviceRepository;
@@ -53,7 +55,7 @@ public class DeviceService implements IDeviceService {
 
     @Override
     public boolean updateDevice(DeviceUpdateDTO deviceUpdateDTO) {
-        Optional<Device> optionalDevice = deviceRepository.findById(deviceUpdateDTO.getDeviceId());
+        /*Optional<Device> optionalDevice = deviceRepository.findById(deviceUpdateDTO.getDeviceId());
         if (optionalDevice.isPresent()) {
             Device device = optionalDevice.get();
             if (deviceUpdateDTO.getDeviceName() != null && !deviceUpdateDTO.getDeviceName().isEmpty()) {
@@ -67,7 +69,21 @@ public class DeviceService implements IDeviceService {
             return true;
         } else {
             throw new EntityNotFoundException("Device not found with ID: " + deviceUpdateDTO.getDeviceId());
+        }*/
+
+        // Refactored code
+        Device device = deviceRepository.findById(deviceUpdateDTO.getDeviceId())
+                .orElseThrow(() -> new EntityNotFoundException("Device not found with id: " + deviceUpdateDTO.getDeviceId()));
+
+        if (deviceUpdateDTO.getDeviceName() != null && !deviceUpdateDTO.getDeviceName().isEmpty()) {
+            device.setDeviceName(deviceUpdateDTO.getDeviceName());
         }
+        if (deviceUpdateDTO.getDeviceBrand() != null && !deviceUpdateDTO.getDeviceBrand().isEmpty()) {
+            device.setDeviceBrand(deviceUpdateDTO.getDeviceBrand());
+        }
+
+        device.setUpdatedAt(LocalDateTime.now());
+        return true;
     }
 
     @Override
